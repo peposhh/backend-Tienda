@@ -74,6 +74,14 @@ const registro_admin = async function (req, res) {
 
 }
 
+
+const login_admin = async function (req, res) {
+    var data = req.body;
+    res.status(200).send({ data: data });
+}
+
+
 module.exports = {
-    registro_admin
+    registro_admin,
+    login_admin
 }
