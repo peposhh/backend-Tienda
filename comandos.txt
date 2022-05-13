@@ -1,0 +1,8 @@
+comandos
+
+
+npm install bcryptjs 
+npm install body-parser 
+npm install  connect-multiparty 
+npm install express 
+npm install moment mogoose jsonwebtoken jwt-simple
