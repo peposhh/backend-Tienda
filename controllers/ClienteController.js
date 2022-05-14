@@ -2,6 +2,7 @@
 
 var Cliente = require('../models/cliente');
 var bcrypt = require('bcryptjs');
+var jwt = require('../helpers/jwt');
 
 const registro_cliente = async function (req, res) {
 
@@ -90,6 +91,7 @@ const login_cliente = async function (req, res) {
 
     cliente_arr = await Cliente.find({ email: data.email });
 
+
     if (cliente_arr.length == 0) {
         // se verifica si existe el correo en la bd
         res.status(200).send({ message: 'No se encontro el correo', data: undefined });
@@ -97,11 +99,21 @@ const login_cliente = async function (req, res) {
     } else {
 
         let user = cliente_arr[0];
-        res.status(200).send({ message: 'Usuario encontrado', data: user });
-
-        /// INICIO DE SESIÓN Y GENERAR TOKEN EN BACKEND
 
 
+        bcrypt.compare(data.password, user.password, async function (error, check) {
+            if (check) {
+                res.status(200).send({
+                    data: user,
+                    token: jwt.createToken(user)
+                });
+            } else {
+                res.status(200).send({ message: 'la contraseña no coincide', data: undefined });
+            }
+
+
+
+        })
 
     }
 
