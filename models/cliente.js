@@ -8,6 +8,7 @@ var Schema = mongoose.Schema;
 var ClienteSchema = Schema({
     rut: { type: String, required: false },
     apellidos: { type: String, required: true },
+    nombres: { type: String, required: true },
     pais: { type: String, required: false },
     email: { type: String, required: true },
     password: { type: String, required: true },
