@@ -127,7 +127,7 @@ const login_cliente = async function (req, res) {
 
 
 // metodo para listar usuarios
-const listar_clente_filtro_admin = async function (req, res) {
+const listar_cliente_filtro_admin = async function (req, res) {
     let tipo = req.params['tipo'];
     let filtro = req.params['filtro'];;
 
@@ -146,7 +146,11 @@ const listar_clente_filtro_admin = async function (req, res) {
         } else if (tipo == 'correo') {
             let reg = await Cliente.find({ email: new RegExp(filtro, 'i') })
             res.status(200).send({ data: reg });
+        } else if (tipo == 'rut') {
+            let reg = await Cliente.find({ rut: new RegExp(filtro, 'i') })
+            res.status(200).send({ data: reg });
         }
+
 
     }
 
@@ -159,5 +163,5 @@ const listar_clente_filtro_admin = async function (req, res) {
 module.exports = {
     registro_cliente,
     login_cliente,
-    listar_clente_filtro_admin
+    listar_cliente_filtro_admin
 }
