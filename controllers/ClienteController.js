@@ -128,31 +128,45 @@ const login_cliente = async function (req, res) {
 
 // metodo para listar usuarios
 const listar_cliente_filtro_admin = async function (req, res) {
-    let tipo = req.params['tipo'];
-    let filtro = req.params['filtro'];;
+    console.log("🚀 ~ file: ClienteController.js ~ line 133 ~ req.user", req.user)
+    if (req.user) {
 
-    console.log(tipo);
+        if (req.user.role == 'admin') {
+
+            let tipo = req.params['tipo'];
+            let filtro = req.params['filtro'];;
+
+            console.log(tipo);
 
 
-    if (tipo == null || tipo == 'null') {
-        let reg = await Cliente.find();
-        res.status(200).send({ data: reg });
-    } else {
+            if (tipo == null || tipo == 'null') {
+                let reg = await Cliente.find();
+                res.status(200).send({ data: reg });
+            } else {
 
-        //filtro
-        if (tipo == 'apellidos') {
-            let reg = await Cliente.find({ apellidos: new RegExp(filtro, 'i') })
-            res.status(200).send({ data: reg });
-        } else if (tipo == 'correo') {
-            let reg = await Cliente.find({ email: new RegExp(filtro, 'i') })
-            res.status(200).send({ data: reg });
-        } else if (tipo == 'rut') {
-            let reg = await Cliente.find({ rut: new RegExp(filtro, 'i') })
-            res.status(200).send({ data: reg });
+                //filtro
+                if (tipo == 'apellidos') {
+                    let reg = await Cliente.find({ apellidos: new RegExp(filtro, 'i') })
+                    res.status(200).send({ data: reg });
+                } else if (tipo == 'correo') {
+                    let reg = await Cliente.find({ email: new RegExp(filtro, 'i') })
+                    res.status(200).send({ data: reg });
+                } else if (tipo == 'rut') {
+                    let reg = await Cliente.find({ rut: new RegExp(filtro, 'i') })
+                    res.status(200).send({ data: reg });
+                }
+
+
+            }
+        } else {
+            res.status(500).send({ message: 'No tienen accesos' });
         }
 
+    } else {
+        res.status(500).send({ message: 'No tienen accesos' });
 
     }
+
 
 
 
