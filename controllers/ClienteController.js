@@ -174,8 +174,25 @@ const listar_cliente_filtro_admin = async function (req, res) {
 }
 
 
+
+const registro_cliente_unitario = async function (req, res) {
+
+    var dato = req.body
+    res.status(200).send({ message: 'Llego', data: dato });
+
+
+}
+
+
+
+
+
+
+
+
 module.exports = {
     registro_cliente,
     login_cliente,
-    listar_cliente_filtro_admin
+    listar_cliente_filtro_admin,
+    registro_cliente_unitario
 }
