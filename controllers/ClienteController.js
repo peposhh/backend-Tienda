@@ -128,7 +128,7 @@ const login_cliente = async function (req, res) {
 
 // metodo para listar usuarios
 const listar_cliente_filtro_admin = async function (req, res) {
-    console.log("🚀 ~ file: ClienteController.js ~ line 133 ~ req.user", req.user)
+
     if (req.user) {
 
         if (req.user.role == 'admin') {
@@ -175,10 +175,34 @@ const listar_cliente_filtro_admin = async function (req, res) {
 
 
 
-const registro_cliente_unitario = async function (req, res) {
+const registro_cliente_admin = async function (req, res) {
 
-    var dato = req.body
-    res.status(200).send({ message: 'Llego', data: dato });
+    if (req.user) {
+
+        if (req.user.role == 'admin') {
+            var data = req.body;
+            console.log("🚀 ~ file: ClienteController.js ~ line 184 ~ data", data)
+            const myPlaintextPassword = 's0/\/\P4$$w0rD';
+
+            bcrypt.hash('12345566', 100, async function (hash) {
+                if (hash) {
+                    console.log(hash);
+                    data.password = hash;
+                    let reg = await Cliente.create(data);
+                    res.status(200).send({ data: reg });
+                } else {
+                    console.log(hash);
+                    res.status(200).send({ message: 'Hubo un error en el servidor', data: undefined });
+                }
+            })
+
+        } else {
+            res.status(500).send({ message: 'No tienen accesos' });
+        }
+    } else {
+        res.status(500).send({ message: 'No tienen accesos' });
+
+    }
 
 
 }
@@ -194,5 +218,5 @@ module.exports = {
     registro_cliente,
     login_cliente,
     listar_cliente_filtro_admin,
-    registro_cliente_unitario
+    registro_cliente_admin
 }

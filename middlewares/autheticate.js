@@ -42,7 +42,7 @@ exports.auth = function (req, res, next) {
 
 
         } catch (error) {
-            return res.status(403).send({ message: 'invalidToken catcah' })
+            return res.status(403).send({ message: 'invalidToken' })
         }
 
     }
