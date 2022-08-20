@@ -3,6 +3,8 @@
 var Cliente = require('../models/cliente');
 var bcrypt = require('bcryptjs');
 var jwt = require('../helpers/jwt');
+const saltRounds = 10;
+
 
 const registro_cliente = async function (req, res) {
 
@@ -35,8 +37,11 @@ const registro_cliente = async function (req, res) {
 
 
     if (data.rut) {
+
         var resultado = Fn.validaRut(data.rut);
+
         clientes_arr_rut = await Cliente.find({ rut: data.rut });
+
         // Validamos el resultado de la funcion Valida rut
         if (resultado) {
 
@@ -44,11 +49,14 @@ const registro_cliente = async function (req, res) {
                 // una vez que el formato del dato es correcto, se verifica si existe en bd
 
                 if (data.password) {
+
                     bcrypt.hash(data.password, 12, function (err, hash) {
+
                         console.log(hash);
                         if (hash) {
                             data.password = hash;
                             var reg = Cliente.create(data);
+
                             res.status(200).send({ message: 'Usuario registrado con exito' });
                         } else {
                             res.status(200).send({ message: 'ErrorServer', data: undefined });
@@ -59,12 +67,14 @@ const registro_cliente = async function (req, res) {
                 } else {
 
                     res.status(200).send({ message: 'Campo password Vacio', data: undefined });
+                    console.log("🚀 ~ file: ClienteController.js ~ line 71 ~ data", data)
                 }
 
 
             } else {
 
                 res.status(200).send({ message: 'rut  ya se encuentra registrados', data: undefined });
+                console.log("🚀 ~ file: ClienteController.js ~ line 78 ~ data", data)
 
             }
 
@@ -77,14 +87,13 @@ const registro_cliente = async function (req, res) {
 
     } else {
         res.status(200).send({ message: 'Campo rut Vacio', data: undefined });
+        console.log("🚀 ~ file: ClienteController.js ~ line 91 ~ data", data)
     }
 
 }
 
 const login_cliente = async function (req, res) {
     var data = req.body;
-    //res.status(200).send({ data: data });
-
 
     var cliente_arr = [];
 
@@ -92,9 +101,11 @@ const login_cliente = async function (req, res) {
     cliente_arr = await Cliente.find({ email: data.email });
 
 
+
     if (cliente_arr.length == 0) {
         // se verifica si existe el correo en la bd
         res.status(200).send({ message: 'No se encontro el correo', data: undefined });
+
 
     } else {
 
@@ -102,13 +113,15 @@ const login_cliente = async function (req, res) {
 
 
         bcrypt.compare(data.password, user.password, async function (error, check) {
+
             if (check) {
                 res.status(200).send({
                     data: user,
-                    token: jwt.createToken(user)
+                    token: jwt.createToken(user),
                 });
             } else {
                 res.status(200).send({ message: 'la contraseña no coincide', data: undefined });
+
             }
 
 
@@ -142,18 +155,22 @@ const listar_cliente_filtro_admin = async function (req, res) {
             if (tipo == null || tipo == 'null') {
                 let reg = await Cliente.find();
                 res.status(200).send({ data: reg });
+
             } else {
 
                 //filtro
                 if (tipo == 'apellidos') {
                     let reg = await Cliente.find({ apellidos: new RegExp(filtro, 'i') })
                     res.status(200).send({ data: reg });
+
                 } else if (tipo == 'correo') {
                     let reg = await Cliente.find({ email: new RegExp(filtro, 'i') })
                     res.status(200).send({ data: reg });
+
                 } else if (tipo == 'rut') {
                     let reg = await Cliente.find({ rut: new RegExp(filtro, 'i') })
                     res.status(200).send({ data: reg });
+
                 }
 
 
@@ -181,20 +198,12 @@ const registro_cliente_admin = async function (req, res) {
 
         if (req.user.role == 'admin') {
             var data = req.body;
-            console.log("🚀 ~ file: ClienteController.js ~ line 184 ~ data", data)
+            const salt = bcrypt.genSaltSync(saltRounds);
             const myPlaintextPassword = 's0/\/\P4$$w0rD';
-
-            bcrypt.hash('12345566', 100, async function (hash) {
-                if (hash) {
-                    console.log(hash);
-                    data.password = hash;
-                    let reg = await Cliente.create(data);
-                    res.status(200).send({ data: reg });
-                } else {
-                    console.log(hash);
-                    res.status(200).send({ message: 'Hubo un error en el servidor', data: undefined });
-                }
-            })
+            const hash = bcrypt.hashSync(myPlaintextPassword, salt);
+            data.password = hash;
+            let reg = await Cliente.create(data);
+            res.status(200).send({ data: reg });
 
         } else {
             res.status(500).send({ message: 'No tienen accesos' });
@@ -219,4 +228,5 @@ module.exports = {
     login_cliente,
     listar_cliente_filtro_admin,
     registro_cliente_admin
+
 }
